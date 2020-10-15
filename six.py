@@ -102,7 +102,7 @@ class _LazyDescr(object):
             except AttributeError:
                 pass
             return result
-        except ModuleNotFoundError:
+        except:
             return None
 
 
@@ -126,7 +126,7 @@ class MovedModule(_LazyDescr):
             value = getattr(_module, attr)
             setattr(self, attr, value)
             return value
-        except ModuleNotFoundError:
+        except:
             return None
 
 
@@ -169,7 +169,7 @@ class MovedAttribute(_LazyDescr):
         try:
             module = _import_module(self.mod)
             return getattr(module, self.attr)
-        except ModuleNotFoundError:
+        except:
             return None
 
 
