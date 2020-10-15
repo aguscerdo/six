@@ -115,10 +115,13 @@ class MovedModule(_LazyDescr):
         return _import_module(self.mod)
 
     def __getattr__(self, attr):
-        _module = self._resolve()
-        value = getattr(_module, attr)
-        setattr(self, attr, value)
-        return value
+        try:
+            _module = self._resolve()
+            value = getattr(_module, attr)
+            setattr(self, attr, value)
+            return value
+        except ModuleNotFoundError:
+            return None
 
 
 class _LazyModule(types.ModuleType):
@@ -157,8 +160,11 @@ class MovedAttribute(_LazyDescr):
             self.attr = old_attr
 
     def _resolve(self):
-        module = _import_module(self.mod)
-        return getattr(module, self.attr)
+        try:
+            module = _import_module(self.mod)
+            return getattr(module, self.attr)
+        except ModuleNotFoundError:
+            return None
 
 
 class _SixMetaPathImporter(object):
@@ -233,6 +239,8 @@ class _MovedItems(_LazyModule):
 
 
 _moved_attributes = [
+    attr for attr in
+    [
     MovedAttribute("cStringIO", "cStringIO", "io", "StringIO"),
     MovedAttribute("filter", "itertools", "builtins", "ifilter", "filter"),
     MovedAttribute("filterfalse", "itertools", "itertools", "ifilterfalse", "filterfalse"),
@@ -303,6 +311,9 @@ _moved_attributes = [
     MovedModule("xmlrpc_client", "xmlrpclib", "xmlrpc.client"),
     MovedModule("xmlrpc_server", "SimpleXMLRPCServer", "xmlrpc.server"),
 ]
+if attr is not None
+]
+
 # Add windows specific modules.
 if sys.platform == "win32":
     _moved_attributes += [
@@ -327,6 +338,8 @@ class Module_six_moves_urllib_parse(_LazyModule):
 
 
 _urllib_parse_moved_attributes = [
+    attr for attr in
+    [
     MovedAttribute("ParseResult", "urlparse", "urllib.parse"),
     MovedAttribute("SplitResult", "urlparse", "urllib.parse"),
     MovedAttribute("parse_qs", "urlparse", "urllib.parse"),
@@ -352,7 +365,7 @@ _urllib_parse_moved_attributes = [
     MovedAttribute("uses_params", "urlparse", "urllib.parse"),
     MovedAttribute("uses_query", "urlparse", "urllib.parse"),
     MovedAttribute("uses_relative", "urlparse", "urllib.parse"),
-]
+] if attr is not None]
 for attr in _urllib_parse_moved_attributes:
     setattr(Module_six_moves_urllib_parse, attr.name, attr)
 del attr
